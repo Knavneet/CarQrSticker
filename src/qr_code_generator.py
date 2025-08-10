@@ -195,6 +195,11 @@ class QRCodeGenerator:
     def generate_batch(self, num_qrs, size, output_folder):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             qr_ids = [str(uuid.uuid4()) for _ in range(num_qrs)]
-            futures = [executor.submit(self.generate_and_save_qr, qr_id, size, output_folder) for qr_id in qr_ids]
-            image_paths = [future.result() for future in concurrent.futures.as_completed(futures)]
+            futures = [
+                executor.submit(self.generate_and_save_qr, qr_id, size, output_folder)
+                for qr_id in qr_ids
+            ]
+            image_paths = [
+                future.result() for future in concurrent.futures.as_completed(futures)
+            ]
         return image_paths
