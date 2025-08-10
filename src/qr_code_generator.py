@@ -1,5 +1,8 @@
 import qrcode
 from PIL import Image, ImageDraw
+import concurrent.futures
+import os
+import uuid
 
 
 def _create_rounded_qr(qr_img, corner_radius=20):
@@ -182,3 +185,16 @@ class QRCodeGenerator:
         final_qr.paste(icon, icon_pos, icon)
 
         return final_qr
+
+    def generate_and_save_qr(self, qr_id, size, output_folder):
+        qr_image = self.generate(qr_id, size)
+        output_path = os.path.join(output_folder, f"carqr_{qr_id}.png")
+        qr_image.save(output_path, "PNG")
+        return output_path
+
+    def generate_batch(self, num_qrs, size, output_folder):
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            qr_ids = [str(uuid.uuid4()) for _ in range(num_qrs)]
+            futures = [executor.submit(self.generate_and_save_qr, qr_id, size, output_folder) for qr_id in qr_ids]
+            image_paths = [future.result() for future in concurrent.futures.as_completed(futures)]
+        return image_paths
