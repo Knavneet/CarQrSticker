@@ -16,8 +16,8 @@ setup(
         "pytest-cov",
     ],
     entry_points={
-        'console_scripts': [
-            'carqrsticker=src.main:main',
+        "console_scripts": [
+            "carqrsticker=src.main:main",
         ],
     },
 )
