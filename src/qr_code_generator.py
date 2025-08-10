@@ -41,7 +41,8 @@ class QRCodeGenerator:
         self.icon_path = icon_path
 
     def generate(self, qr_id, size=300):
-        qr_data = f"www.sticqr.docpulp.com/qr_id/{qr_id}"
+        # Initial URL will always be the claim URL
+        qr_data = f"www.sticqr.docpulp.com/claim/{qr_id}"
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_M,
@@ -192,12 +193,13 @@ class QRCodeGenerator:
         qr_image.save(output_path, "PNG")
         return output_path
 
-    def generate_batch(self, num_qrs, size, output_folder):
+    def generate_batch(self, num_qrs, size, output_folder, qr_uuids=None):
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            qr_ids = [str(uuid.uuid4()) for _ in range(num_qrs)]
+            if qr_uuids is None:
+                qr_uuids = [str(uuid.uuid4()) for _ in range(num_qrs)]
             futures = [
-                executor.submit(self.generate_and_save_qr, qr_id, size, output_folder)
-                for qr_id in qr_ids
+                executor.submit(self.generate_and_save_qr, qr_uuid, size, output_folder)
+                for qr_uuid in qr_uuids
             ]
             image_paths = [
                 future.result() for future in concurrent.futures.as_completed(futures)
