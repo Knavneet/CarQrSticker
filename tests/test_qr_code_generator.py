@@ -161,3 +161,15 @@ def test_cutout_shape_circle(phone_icon_path):
     )
     qr_image = generator.generate("test_cutout_shape_circle", size=300)
     assert qr_image.mode == "RGBA"
+
+def test_generate_batch(tmpdir):
+    generator = QRCodeGenerator()
+    num_qrs = 5
+    output_folder = str(tmpdir)
+    image_paths = generator.generate_batch(num_qrs, 200, output_folder)
+
+    assert len(image_paths) == num_qrs
+    for image_path in image_paths:
+        assert os.path.exists(image_path)
+        assert os.path.basename(image_path).startswith("carqr_")
+        assert os.path.basename(image_path).endswith(".png")

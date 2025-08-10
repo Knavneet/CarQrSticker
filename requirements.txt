@@ -5,9 +5,9 @@ click==8.1.7
 itsdangerous==2.1.2
 MarkupSafe==2.1.3
 
-# For full QR code functionality, you would also need:
 qrcode
 Pillow
+fpdf2
 
 pytest 
 pytest-cov
